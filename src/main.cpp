@@ -76,10 +76,11 @@ State* State::next_state(Move move){
   Point from = move.first, to = move.second;
   
   int8_t moved = next.board[this->player][from.first][from.second];
-  //promotion for pawn
+  //promotion for pawn (pawn->queen)
   if(moved == 1 && (to.first==BOARD_H-1 || to.first==0)){
     moved = 5;
   }
+  //update the opponent's board  
   if(next.board[1-this->player][to.first][to.second]){
     next.board[1-this->player][to.first][to.second] = 0;
   }
@@ -87,6 +88,7 @@ State* State::next_state(Move move){
   next.board[this->player][from.first][from.second] = 0;
   next.board[this->player][to.first][to.second] = moved;
   
+  //opponent's turn
   State* next_state = new State(next, 1-this->player);
   
   if(this->game_state != WIN)
@@ -134,7 +136,7 @@ void State::get_legal_actions(){
   for(int i=0; i<BOARD_H; i+=1){
     for(int j=0; j<BOARD_W; j+=1){
       if((now_piece=self_board[i][j])){
-        // std::cout << this->player << "," << now_piece << ' ';
+        //std::cout << this->player << "," << now_piece << ' ';
         switch (now_piece){
           case 1: //pawn
             if(this->player && i<BOARD_H-1){

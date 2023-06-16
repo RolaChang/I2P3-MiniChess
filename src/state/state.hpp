@@ -47,11 +47,13 @@ class State{
     Board board;
     int player = 0;
     std::vector<Move> legal_actions;
+    Move evalMove;
     
     State(){};
     State(int player): player(player){};
     State(Board board): board(board){};
     State(Board board, int player): board(board), player(player){};
+    State(Move evalMove): evalMove(evalMove){};
     
     int evaluate();
     State* next_state(Move move);

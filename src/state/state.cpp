@@ -8,11 +8,50 @@
 
 /**
  * @brief evaluate the state
- * 
+ * 1. count the current state value.
+ * 2. check if the next move will eat oppn's chess and update the next value.
+ * 3. repeat the step2 untill find the optimal move.
+ * 4. if not found, just random choose the next step.
  * @return int 
  */
+
+static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
 int State::evaluate(){
   // [TODO] design your own evaluation function
+  int selfVal = 0, oppnVal = 0, piece, curVal, nxtVal;
+  Move nxtmove;
+  bool flag=false;
+  // evaluate the current state value
+  auto self_board = this->board.board[this->player];
+  auto oppn_board = this->board.board[1 - this->player];
+  for(size_t i=0; i<BOARD_H; i+=1){
+    for(size_t j=0; j<BOARD_W; j+=1){
+      if((piece=self_board[i][j])){
+        selfVal += material_table[piece];
+      }
+      if((piece=oppn_board[i][j])){
+        oppnVal += material_table[piece];
+      }
+    }
+  }
+  // evaluate the state value after moving 
+  curVal = selfVal-oppnVal;
+  nxtVal = curVal;
+  //std::vector<Move> legal_actions;
+  for(auto it: this->legal_actions){
+      Point to = it.second;
+      int tmp = curVal;
+      if((piece=oppn_board[to.first][to.second])){
+        tmp += material_table[piece];
+      }
+      if(tmp>nxtVal){
+        nxtVal = tmp;
+        nxtmove = it;
+        flag = true;
+      }
+  }
+  if(!flag) return 1; 
+  this->evalMove = nxtmove;
   return 0;
 }
 
