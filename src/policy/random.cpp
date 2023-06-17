@@ -13,6 +13,7 @@
 #include <cstdint>
 
 
+
 /**
  * @brief Randomly get a legal action
  * 
