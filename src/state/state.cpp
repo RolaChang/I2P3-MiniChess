@@ -16,14 +16,12 @@
  */
 
 static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
-int State::evaluate(){
+int State::evaluate(bool self){
   // [TODO] design your own evaluation function
-  int selfVal = 0, oppnVal = 0, piece, curVal, nxtVal;
-  Move nxtmove;
-  bool flag=false;
+  int selfVal = 0, oppnVal = 0, piece, Val=0;
   // evaluate the current state value
-  auto self_board = this->board.board[this->player];
-  auto oppn_board = this->board.board[1 - this->player];
+  auto self_board = this->board.board[self];
+  auto oppn_board = this->board.board[1-self];
   for(size_t i=0; i<BOARD_H; i+=1){
     for(size_t j=0; j<BOARD_W; j+=1){
       if((piece=self_board[i][j])){
@@ -34,27 +32,9 @@ int State::evaluate(){
       }
     }
   }
-  // evaluate the state value after moving 
-  curVal = selfVal-oppnVal;
-  nxtVal = curVal;
-  //std::vector<Move> legal_actions;
-  for(auto it: this->legal_actions){
-      Point to = it.second;
-      int tmp = curVal;
-      if((piece=oppn_board[to.first][to.second])){
-        tmp += material_table[piece];
-      }
-      if(tmp>nxtVal){
-        nxtVal = tmp;
-        nxtmove = it;
-        flag = true;
-      }
-  }
-  if(!flag) return 1; 
-  this->evalMove = nxtmove;
-  return 0;
+  Val = selfVal-oppnVal;
+  return Val;
 }
-
 
 /**
  * @brief return next state after the move

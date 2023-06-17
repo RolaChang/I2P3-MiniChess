@@ -13,8 +13,7 @@
 #include <cstdint>
 #include <limits.h>
 
-#define MAX_DEPTH 3
-int minimax(State *state, int depth);
+int minimax(State *s, int depth, bool self);
 /**
  * @brief Player picks the largest score, opponent picks the smallest score
  * 
@@ -23,47 +22,80 @@ int minimax(State *state, int depth);
  * @return Move 
  */
 Move Minimax::get_move(State *state, int depth){
-    minimax(state, depth);
+    minimax(state, depth, true);
     return state->evalMove;
 }
 
-int minimax(State *state, int depth){
+int minimax(State *state, int depth, bool self){
 
     if(depth==0){
-        if(state->evaluate()){
-            auto actions = state->legal_actions;
-            state->evalMove = actions[(rand()+depth)%actions.size()];
-        }
-        return 0;
+        return state->evaluate(self);
     }
-    State* curS = state;
-    int self = curS->player;
     int largest = INT_MIN, smallest = INT_MAX;
-    Move nxtmove; 
-    // Minimizing
+    State *curS = state;
+    Move nxtMove;
+    // Maximizing
     if(self){
         if(!state->legal_actions.size()) state->get_legal_actions();
         for(auto it: state->legal_actions){
-            int val = minimax(curS->next_state(it), depth-1);
+            int val = minimax(curS->next_state(it), depth-1, false);
+            if(val>largest){
+                largest = val;
+                nxtMove = it;
+            }
+            state->evalMove = nxtMove;
+        }
+        return largest;       
+    }
+    // Minimizing
+    else{
+        if(!state->legal_actions.size()) state->get_legal_actions();
+        for(auto it: state->legal_actions){
+            int val = minimax(curS->next_state(it), depth-1, true);
             if(val<smallest){
                 smallest = val;
-                nxtmove = it;
+                nxtMove = it;
             }
+            state->evalMove = nxtMove;
         }
-        state->evalMove = nxtmove;
-        return largest;        
+        return smallest; 
     }
+}
+
+/*
+int minimax(State *state, int depth){
+
+    if(depth==0){
+        return state->evaluate();
+    }
+    int largest = INT_MIN, smallest = INT_MAX;
+    State *curS = state;
+    Move nxtMove;
     // Maximizing
-    else{
+    if(state->player){
         if(!state->legal_actions.size()) state->get_legal_actions();
         for(auto it: state->legal_actions){
             int val = minimax(curS->next_state(it), depth-1);
             if(val>largest){
                 largest = val;
-                nxtmove = it;
+                nxtMove = it;
             }
+            state->evalMove = nxtMove;
         }
-        state->evalMove = nxtmove;
-        return largest;
+        return largest;       
+    }
+    // Minimizing
+    else{
+        if(!state->legal_actions.size()) state->get_legal_actions();
+        for(auto it: state->legal_actions){
+            int val = minimax(curS->next_state(it), depth-1);
+            if(val<smallest){
+                smallest = val;
+                nxtMove = it;
+            }
+            state->evalMove = nxtMove;
+        }
+        return smallest; 
     }
 }
+*/

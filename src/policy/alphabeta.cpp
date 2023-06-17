@@ -13,8 +13,7 @@
 #include <cstdint>
 #include <limits.h>
 
-#define MAX_DEPTH 3
-int alphabeta(State *state, int depth, int alpha, int beta);
+int alphabeta(State *state, int depth, int alpha, int beta, bool self);
 /**
  * @brief Player picks the largest score, opponent picks the smallest score
  * 
@@ -24,45 +23,43 @@ int alphabeta(State *state, int depth, int alpha, int beta);
  */
 Move Alphabeta::get_move(State *state, int depth){
     int Alpha = INT_MIN, Beta = INT_MAX;
-    alphabeta(state, depth, Alpha, Beta);
+    alphabeta(state, depth, Alpha, Beta, true);
     return state->evalMove;
 }
 
-int alphabeta(State *state, int depth, int alpha, int beta){
+int alphabeta(State *state, int depth, int alpha, int beta, bool self){
 
     if(depth==0){
-        if(state->evaluate()){
-            auto actions = state->legal_actions;
-            state->evalMove = actions[(rand()+depth)%actions.size()];
-        }
-        return 0;
+        return state->evaluate(self);
     }
     State *curS = state;
-    int self = state->player;
-    // Minimizing
+    Move nxtMove;
+    // Maximizing
     if(self){
         if(!state->legal_actions.size()) state->get_legal_actions();
         for(auto it: state->legal_actions){
-            int val = alphabeta(curS->next_state(it), depth-1, alpha, beta);
-            if(val<beta){
-                if(depth==0) state->evalMove = it;
-                beta = val;
+            int val = alphabeta(curS->next_state(it), depth-1, alpha, beta, false);
+            if(val>alpha){
+                alpha = val;
+                nxtMove = it;
             }
+            state->evalMove = nxtMove;
             if(alpha>=beta) break;
         }
-        return beta;        
+        return alpha;       
     }
-    // Maximizing
+    // Minimizing
     else{
         if(!state->legal_actions.size()) state->get_legal_actions();
         for(auto it: state->legal_actions){
-            int val = alphabeta(curS->next_state(it), depth-1, alpha, beta);
-            if(val>alpha){
-                if(depth==0) state->evalMove = it;
-                alpha = val;
+            int val = alphabeta(curS->next_state(it), depth-1, alpha, beta, true);
+            if(val<beta){
+                beta = val;
+                nxtMove = it;
             }
+            state->evalMove = nxtMove;
             if(alpha>=beta) break;
         }
-        return alpha;
+        return beta; 
     }
 }
