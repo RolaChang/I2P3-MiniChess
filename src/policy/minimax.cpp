@@ -29,7 +29,8 @@ Move Minimax::get_move(State *state, int depth){
 int minimax(State *state, int depth, bool self){
 
     if(depth==0){
-        return state->evaluate(self);
+        if(self) return state->evaluate(state->player);
+        else return state->evaluate(1-state->player);
     }
     int largest = INT_MIN, smallest = INT_MAX;
     State *curS = state;

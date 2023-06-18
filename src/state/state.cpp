@@ -1,6 +1,9 @@
 #include <iostream>
 #include <sstream>
 #include <cstdint>
+#include <string>
+#include <vector>
+#include <map>
 
 #include "./state.hpp"
 #include "../config.hpp"
@@ -15,7 +18,84 @@
  * @return int 
  */
 
-static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
+static const int self_material_table[7] = {0, 200, 600, 700, 800, 2000, 10000};
+
+int MidsquareScore(char player, int piece, int x, int y){
+    int val=0;
+    if(player=='b'){
+      switch(piece){
+        case 1:
+          val = bPawnTableMid[x][y];
+          break;
+        case 2:
+          val = bRookTableMid[x][y];
+          break; 
+        case 3:
+          val = bKnightTableMid[x][y];
+          break;
+        case 4:
+          val = bBishopTableMid[x][y];
+          break;
+        case 5:
+          val = bQueenTableMid[x][y];
+          break;
+        case 6:
+          val = bKingTableMid[x][y];
+          break;
+      }
+    }
+    else if(player=='w'){
+      switch(piece){
+         case 1:
+          val = wPawnTableMid[x][y];
+          break;
+        case 2:
+          val = wRookTableMid[x][y];
+          break; 
+        case 3:
+          val = wKnightTableMid[x][y];
+          break;
+        case 4:
+          val = wBishopTableMid[x][y];
+          break;
+        case 5:
+          val = wQueenTableMid[x][y];
+          break;
+        case 6:
+          val = wKingTableMid[x][y];
+          break;
+      }
+    }
+    return val;
+}
+
+
+int State::evaluate(bool self){
+  // [TODO] design your own evaluation function
+  int selfVal = 0, oppnVal = 0, piece, Val=0;
+  // evaluate the current state value
+  auto self_board = this->board.board[self];
+  auto oppn_board = this->board.board[1-self];
+  char player = self==1? 'b': 'w';
+  for(size_t i=0; i<BOARD_H; i+=1){
+    for(size_t j=0; j<BOARD_W; j+=1){
+      if((piece=self_board[i][j])){
+        selfVal += self_material_table[piece];
+        if(player=='b') selfVal += MidsquareScore('b' ,piece, i, j);
+        else selfVal += MidsquareScore('w' ,piece, i, j);
+      }
+      if((piece=oppn_board[i][j])){
+        oppnVal += self_material_table[piece];
+        if(player=='b') selfVal += MidsquareScore('b' ,piece, i, j);
+        else selfVal += MidsquareScore('w' ,piece, i, j);
+      }
+    } 
+  }
+  Val = selfVal-oppnVal;
+  return Val;
+}
+
+/*
 int State::evaluate(bool self){
   // [TODO] design your own evaluation function
   int selfVal = 0, oppnVal = 0, piece, Val=0;
@@ -30,11 +110,12 @@ int State::evaluate(bool self){
       if((piece=oppn_board[i][j])){
         oppnVal += material_table[piece];
       }
-    }
+    } 
   }
   Val = selfVal-oppnVal;
   return Val;
-}
+}*/
+
 
 /**
  * @brief return next state after the move

@@ -30,7 +30,8 @@ Move Alphabeta::get_move(State *state, int depth){
 int alphabeta(State *state, int depth, int alpha, int beta, bool self){
 
     if(depth==0){
-        return state->evaluate(self);
+        if(self) return state->evaluate(state->player);
+        else return state->evaluate(1-state->player);
     }
     State *curS = state;
     Move nxtMove;
