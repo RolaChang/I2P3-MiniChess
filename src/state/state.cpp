@@ -11,13 +11,11 @@
 
 /**
  * @brief evaluate the state
- * 1. count the current state value.
- * 2. check if the next move will eat oppn's chess and update the next value.
- * 3. repeat the step2 untill find the optimal move.
- * 4. if not found, just random choose the next step.
+ * count the current state value.
  * @return int 
  */
 
+static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
 static const int self_material_table[7] = {0, 200, 600, 700, 800, 2000, 10000};
 
 int MidsquareScore(char player, int piece, int x, int y){
@@ -72,7 +70,8 @@ int MidsquareScore(char player, int piece, int x, int y){
 
 int State::evaluate(bool self){
   // [TODO] design your own evaluation function
-  int selfVal = 0, oppnVal = 0, piece, Val=0;
+  int selfVal = 0, oppnVal = 0, Val=0;
+  int piece;
   // evaluate the current state value
   auto self_board = this->board.board[self];
   auto oppn_board = this->board.board[1-self];
@@ -95,8 +94,8 @@ int State::evaluate(bool self){
   return Val;
 }
 
-/*
-int State::evaluate(bool self){
+
+int State::normal_evaluate(bool self){
   // [TODO] design your own evaluation function
   int selfVal = 0, oppnVal = 0, piece, Val=0;
   // evaluate the current state value
@@ -114,7 +113,7 @@ int State::evaluate(bool self){
   }
   Val = selfVal-oppnVal;
   return Val;
-}*/
+}
 
 
 /**

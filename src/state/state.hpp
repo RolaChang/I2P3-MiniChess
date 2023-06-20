@@ -56,6 +56,7 @@ class State{
     State(Move evalMove): evalMove(evalMove){};
     
     int evaluate(bool self);
+    int normal_evaluate(bool self);
     State* next_state(Move move);
     void get_legal_actions();
     std::string encode_output();

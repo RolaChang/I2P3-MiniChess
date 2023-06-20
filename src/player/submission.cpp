@@ -3,8 +3,8 @@
 
 #include "../config.hpp"
 #include "../state/state.hpp"
-#include "../policy/alphabeta.hpp"
-#define MAX_DEPTH 3 //5
+#include "../policy/submission.hpp"
+#define MAX_DEPTH 3
 
 State* root;
 

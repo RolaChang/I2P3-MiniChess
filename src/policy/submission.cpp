@@ -1,7 +1,7 @@
 #include <cstdlib>
 
 #include "../state/state.hpp"
-#include "./alphabeta.hpp"
+#include "./submission.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -32,8 +32,8 @@ Move Alphabeta::get_move(State *state, int depth){
 int alphabeta(State *state, int depth, int alpha, int beta, bool self){
 
     if(depth==0){
-        if(self) return state->normal_evaluate(state->player);
-        else return state->normal_evaluate(1-state->player);
+        if(self) return state->evaluate(state->player);
+        else return state->evaluate(1-state->player);
     }
     State *curS = state;
     Move nxtMove;

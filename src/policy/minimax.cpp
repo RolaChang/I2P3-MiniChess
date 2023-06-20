@@ -29,8 +29,8 @@ Move Minimax::get_move(State *state, int depth){
 int minimax(State *state, int depth, bool self){
 
     if(depth==0){
-        if(self) return state->evaluate(state->player);
-        else return state->evaluate(1-state->player);
+        if(self) return state->normal_evaluate(state->player);
+        else return state->normal_evaluate(1-state->player);
     }
     int largest = INT_MIN, smallest = INT_MAX;
     State *curS = state;
@@ -62,41 +62,3 @@ int minimax(State *state, int depth, bool self){
         return smallest; 
     }
 }
-
-/*
-int minimax(State *state, int depth){
-
-    if(depth==0){
-        return state->evaluate();
-    }
-    int largest = INT_MIN, smallest = INT_MAX;
-    State *curS = state;
-    Move nxtMove;
-    // Maximizing
-    if(state->player){
-        if(!state->legal_actions.size()) state->get_legal_actions();
-        for(auto it: state->legal_actions){
-            int val = minimax(curS->next_state(it), depth-1);
-            if(val>largest){
-                largest = val;
-                nxtMove = it;
-            }
-            state->evalMove = nxtMove;
-        }
-        return largest;       
-    }
-    // Minimizing
-    else{
-        if(!state->legal_actions.size()) state->get_legal_actions();
-        for(auto it: state->legal_actions){
-            int val = minimax(curS->next_state(it), depth-1);
-            if(val<smallest){
-                smallest = val;
-                nxtMove = it;
-            }
-            state->evalMove = nxtMove;
-        }
-        return smallest; 
-    }
-}
-*/
